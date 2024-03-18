@@ -9,10 +9,11 @@ class Uczen:
         return f"Imię: {self.imie.title()}, Nazwisko: {self.nazwisko.title()}, Klasa: {self.nazwaKlasy}"
 
 class Nauczyciel:
-    def __init__(self, imieNauczyciela, nazwiskoNauczyciela, przedmiotProwadzony):
+    def __init__(self, imieNauczyciela, nazwiskoNauczyciela, przedmiotProwadzony, zajeciaZKlasa):
         self.imie = imieNauczyciela
         self.nazwisko = nazwiskoNauczyciela
         self.przedmiot = przedmiotProwadzony
+        self.zajecia = zajeciaZKlasa
 
     def __repr__(self):
         return f"Imię: {self.imie.title()}, Nazwisko: {self.nazwisko.title()}, " \
@@ -38,37 +39,42 @@ spolecznoscSzkoly = {
 }
 
 uczniowie = [Uczen(imieUcznia = "kamil", nazwiskoUcznia = "dudziński", nazwaKlasyUcznia = "7C"),
-             Uczen(imieUcznia = "agnieszka", nazwiskoUcznia = "bury", nazwaKlasyUcznia = "5D\n"),
-             Uczen(imieUcznia = "weronika", nazwiskoUcznia = "nowak", nazwaKlasyUcznia = "3A\n")]
+             Uczen(imieUcznia = "agnieszka", nazwiskoUcznia = "bury", nazwaKlasyUcznia = "5D"),
+             Uczen(imieUcznia = "weronika", nazwiskoUcznia = "nowak", nazwaKlasyUcznia = "3A"),
+             Uczen(imieUcznia = "KaroloNa", nazwiskoUcznia = "kwaśniewska", nazwaKlasyUcznia = "7C")]
 
-nauczyciel = [Nauczyciel(imieNauczyciela = "Kazimierz", nazwiskoNauczyciela = "Nowakowski",
-                         przedmiotProwadzony = "Przyroda")]
+nauczyciele = [
+                Nauczyciel(imieNauczyciela ="Kazimierz", nazwiskoNauczyciela ="Nowakowski",
+                        przedmiotProwadzony = "Przyroda", zajeciaZKlasa = "7C"),
+                Nauczyciel(imieNauczyciela = "Joanna", nazwiskoNauczyciela = "Marzec",
+                        przedmiotProwadzony = "Biologia", zajeciaZKlasa = "5D")]
 
-wychowawca = [Wychowawca(imieWychowawcy ="Agnieszka", nazwiskoWychowawcy ="Wojciechowska", prowadzonaKlasa ="7C")]
+wychowawca = [Wychowawca(imieWychowawcy ="Agnieszka", nazwiskoWychowawcy ="Wojciechowska", prowadzonaKlasa ="7C"),
+              Wychowawca(imieWychowawcy = "Paweł", nazwiskoWychowawcy = "Burt", prowadzonaKlasa = "3A")]
 
 def znajdzKlase(nazwaKlasy):
     pobierzListeKlas = []
     for listaKlas in uczniowie:
         if listaKlas.nazwaKlasy == nazwaKlasy:
             pobierzListeKlas.append(listaKlas)
+
     for imieWychowawcySzkoly in wychowawca:
         if imieWychowawcySzkoly.prowadzonaKlasa == nazwaKlasy:
             pobierzListeKlas.append(imieWychowawcySzkoly)
     return pobierzListeKlas
 
+def znajdzNauczycielaProwadzacegoUcznia(imieUcznia, nazwiskoUcznia):
+    for uczen in uczniowie:
+        if uczen.imie == imieUcznia and uczen.nazwisko == nazwiskoUcznia:
+            for nauczyciel in nauczyciele:
+                if nauczyciel.zajecia == uczen.nazwaKlasy:
+                    return nauczyciel
 
 
 
 
 
 
-def znajdzUcznia(imie, nazwisko, nazwaKlasy):
-    listaUczniowSzkoly = []
-    for listaUczniow in uczniowie:
-        if listaUczniow.imie == imie.lower() and listaUczniow.nazwisko == nazwisko.lower() \
-                and listaUczniow.nazwaKlasy == nazwaKlasy:
-            listaUczniowSzkoly.append(listaUczniow)
-    return listaUczniowSzkoly
 
 
 def main():
@@ -91,8 +97,8 @@ def main():
                     imieNauczyciela = input("Podaj imię nauczyciela szkoły: ")
                     nazwiskoNauczyciela = input("Podaj nazwisko nauczyciela szkoły: ")
                     nazwaPrzedmiotu = input("Podaj nazwę przedmiotu jaki nauczyciel prowadzi: ")
-                    nauczyciel.append(Nauczyciel(imieNauczyciela, nazwiskoNauczyciela, nazwaPrzedmiotu))
-                    print(nauczyciel)
+                    nauczyciele.append(Nauczyciel(imieNauczyciela, nazwiskoNauczyciela, nazwaPrzedmiotu))
+                    print(nauczyciele)
 
                 elif wyborUtworz == "3":
                     imieWychowawcy = input("Podaj imię wychowawcy klasy: ")
@@ -123,24 +129,17 @@ def main():
 
 
 
-
-
                 elif opcje == "2":
-                    imieUcznia = input("Podaj imie ucznia: ")
+                    imieUcznia = input("Podaj imię ucznia: ")
                     nazwiskoUcznia = input("Podaj nazwisko ucznia: ")
-                    nazwaKlasyUcznia = input("Podaj nazwy klasy do której chodzi uczeń: ").title().upper()
-                    imieUczniaSzkoly = znajdzUcznia(imie = imieUcznia, nazwisko = nazwiskoUcznia,
-                                                    nazwaKlasy = nazwaKlasyUcznia)
-                    if imieUczniaSzkoly:
-                        print(f"W naszej szkole jest uczeń o imieniu {imieUcznia.title()} "
-                              f"nazwisku {nazwiskoUcznia.title()}, który chodzi do klasy {nazwaKlasyUcznia.title()}")
+                    nauczycielUczacy = znajdzNauczycielaProwadzacegoUcznia(imieUcznia, nazwiskoUcznia)
+                    if nauczycielUczacy:
+                        print(f"Nauczyciel, który uczy ucznia o imieniu {imieUcznia.title()}"
+                              f"i nazwisku {nazwiskoUcznia.title()}: {nauczycielUczacy}")
                     else:
-                        print("W naszej szkole nie ma takiego ucznia")
+                        print(
+                            f"Nie znaleziono nauczyciela uczącego ucznia o imieniu {imieUcznia} i nazwisku {nazwiskoUcznia}.")
 
-
-
-                elif opcje == "2":
-                    pass
 
                 elif opcje == "3":
                     pass
