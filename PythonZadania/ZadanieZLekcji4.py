@@ -29,15 +29,6 @@ class Wychowawca:
         return f"Imie: {self.imieWychowawcySzkoly.title()}, Nazwisko: {self.nazwiskoWychowawcySzkoly.title()}, " \
                f"Prowadzona klasa: {self.prowadzonaKlasa.title()}"
 
-
-
-
-spolecznoscSzkoly = {
-    "uczniowie" : [],
-    "nauczyciele" : [],
-    "wychowawcy" : [],
-}
-
 uczniowie = [Uczen(imieUcznia = "kamil", nazwiskoUcznia = "dudziński", nazwaKlasyUcznia = "7C"),
              Uczen(imieUcznia = "agnieszka", nazwiskoUcznia = "bury", nazwaKlasyUcznia = "5D"),
              Uczen(imieUcznia = "weronika", nazwiskoUcznia = "nowak", nazwaKlasyUcznia = "3A"),
@@ -70,12 +61,24 @@ def znajdzNauczycielaProwadzacegoUcznia(imieUcznia, nazwiskoUcznia):
                 if nauczyciel.zajecia == uczen.nazwaKlasy:
                     return nauczyciel
 
+def znajdzKlasyKtoreProwadziNauczyciel(imieNauczyciela, nazwiskoNauczyciela):
+    uczniowieProwadzeniPrzezNauczyciela = []
+    for nauczyciel in nauczyciele:
+        if nauczyciel.imie == imieNauczyciela and nauczyciel.nazwisko == nazwiskoNauczyciela:
+            for uczen in uczniowie:
+                if nauczyciel.zajecia in uczen.nazwaKlasy:
+                    uczniowieProwadzeniPrzezNauczyciela.append(uczen)
+    return uczniowieProwadzeniPrzezNauczyciela
 
-
-
-
-
-
+def znajdzWychowawceKlasy(imieWychowawcy, nazwiskoWychowawcy):
+    uczniowieProwadzeniPrzezWychowawce = []
+    for wychowawcy in wychowawca:
+        if wychowawcy.imieWychowawcySzkoly == imieWychowawcy \
+            and wychowawcy.nazwiskoWychowawcySzkoly == nazwiskoWychowawcy:
+            for uczen in uczniowie:
+                if wychowawcy.prowadzonaKlasa in uczen.nazwaKlasy:
+                    uczniowieProwadzeniPrzezWychowawce.append(uczen)
+    return uczniowieProwadzeniPrzezWychowawce
 
 def main():
     while True:
@@ -97,7 +100,8 @@ def main():
                     imieNauczyciela = input("Podaj imię nauczyciela szkoły: ")
                     nazwiskoNauczyciela = input("Podaj nazwisko nauczyciela szkoły: ")
                     nazwaPrzedmiotu = input("Podaj nazwę przedmiotu jaki nauczyciel prowadzi: ")
-                    nauczyciele.append(Nauczyciel(imieNauczyciela, nazwiskoNauczyciela, nazwaPrzedmiotu))
+                    zajeciaZKlasa = input("Podaj nazwę klasy, którą nauczyciel prwadzi: ")
+                    nauczyciele.append(Nauczyciel(imieNauczyciela, nazwiskoNauczyciela, nazwaPrzedmiotu, zajeciaZKlasa))
                     print(nauczyciele)
 
                 elif wyborUtworz == "3":
@@ -105,9 +109,11 @@ def main():
                     nazwiskoWychowawcy = input("Podaj nazwisko wychowawcy klasy: ")
                     klasaProwadzona = input("Podaj klasę którą prowadzi wychowawca: ")
                     wychowawca.append(Wychowawca(imieWychowawcy, nazwiskoWychowawcy, klasaProwadzona))
+                    print(wychowawca)
 
                 elif wyborUtworz == "4":
                     break
+
                 else:
                     print("\nWybrałeś niewłaściwą opcję, spróbuj ponownie\n")
                     continue
@@ -115,8 +121,8 @@ def main():
         elif opcje == "2":
             while True:
                 opcje = input("Wybierz jedną z opcji: \n1. Zarządzaj klasami \n2. Zarządzań uczniami "
-                              "\n2. Zarządzaj nauczycielami \n3. Zarządzaj wychowawcami "
-                              "\n4. Wróc do menu głównego\n\n Podaj swój wybór: ")
+                              "\n3. Zarządzaj nauczycielami \n4. Zarządzaj wychowawcami "
+                              "\n5. Wróc do menu głównego\n\n Podaj swój wybór: ")
 
                 if opcje == "1":
                     podajNazweKlasy = input("Podaj nazwę klasy: ")
@@ -126,25 +132,38 @@ def main():
                     else:
                         print("Nie ma takiego ucznia")
 
-
-
-
                 elif opcje == "2":
                     imieUcznia = input("Podaj imię ucznia: ")
                     nazwiskoUcznia = input("Podaj nazwisko ucznia: ")
                     nauczycielUczacy = znajdzNauczycielaProwadzacegoUcznia(imieUcznia, nazwiskoUcznia)
                     if nauczycielUczacy:
-                        print(f"Nauczyciel, który uczy ucznia o imieniu {imieUcznia.title()}"
-                              f"i nazwisku {nazwiskoUcznia.title()}: {nauczycielUczacy}")
+                        print(f"Nauczyciel, który uczy ucznia {imieUcznia.title()} {nazwiskoUcznia.title()}: "
+                              f"{nauczycielUczacy}")
                     else:
-                        print(
-                            f"Nie znaleziono nauczyciela uczącego ucznia o imieniu {imieUcznia} i nazwisku {nazwiskoUcznia}.")
-
+                        print(f"Nie znaleziono nauczyciela uczącego ucznia o "
+                              f"imieniu {imieUcznia} i nazwisku {nazwiskoUcznia}.")
 
                 elif opcje == "3":
-                    pass
+                    imieNauczyciela = input("Podaj imie nauczyciela: ")
+                    nazwiskoNauczyciela = input("Podaj nazwisko nauczyciela: ")
+                    nauczycielProwadzacyKlase = znajdzKlasyKtoreProwadziNauczyciel(imieNauczyciela, nazwiskoNauczyciela)
+                    if nauczycielProwadzacyKlase:
+                        for uczen in nauczycielProwadzacyKlase:
+                            print(f"Nauczyciel {imieNauczyciela} {nazwiskoNauczyciela} prowadzi następujące klasy {uczen}")
+                    else:
+                        print("Brak uczniów prowadzonych przez tego nauczyciela.")
 
                 elif opcje == "4":
+                    imieWychowawcy = input("Podaj imie wychowawcy: ")
+                    nazwiskoWychowawcy = input("Podaj nazwisko wychowawcy: ")
+                    wychowawcaProwadzacyKlase = znajdzWychowawceKlasy(imieWychowawcy, nazwiskoWychowawcy)
+                    if wychowawcaProwadzacyKlase:
+                        for uczen in wychowawcaProwadzacyKlase:
+                            print(uczen)
+                    else:
+                        print("Brak uczniów prowadzonych przez tego wychowawcę")
+
+                elif opcje == "5":
                     break
 
                 else:
