@@ -1,0 +1,1 @@
+[{'tytulFilmu': 'Potop', 'rezyser': 'Hoffman', 'produkcja': "Zespó³ Filmowy 'X'", 'iloscSztuk': 10, 'iloscDostepnychSztuk': 5}]
