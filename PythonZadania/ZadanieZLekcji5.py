@@ -16,19 +16,28 @@ zakonczProgram = False
 while not zakonczProgram:
     menuWyboru = input("Wybierz z listy operację do wykonania:\n1. Saldo, \n2. Sprzedaż, \n3. Zakup, \n4. Konto, \n5. "
                        "Lista, \n6. Magazyn, \n7. Przegląd, \n8. Koniec programu\n\nWpisz wybraną opcję: ")
+
     if menuWyboru == "1":
         dodajDoSalda = float(input("Podaj kwotę jaką chcesz dodać do salda: "))
         saldo = float(saldo)
         noweSaldo = saldo + dodajDoSalda
-        with open("plik.txt", "r") as plik:
-            dodajDoSalda = str(plik.readline())
-        if noweSaldo < 0:
-            print("Nie możesz mieć ujemniego salda")
-        else:
-            saldo = noweSaldo
-            konto.append(f"Twoje aktualne saldo po operacji wynosi: {saldo}")
-            with open("plik.txt", "a+") as plik:
+        plikIstnieje = False
+        with open("plik.txt", "a+") as plik:
+            zawartosc = plik.read()
+            if zawartosc:
+                aktualneSaldo = float(zawartosc)
+                plikIstnieje = True
+        if not plikIstnieje:
+            with open("plik.txt", "a") as plik:
                 plik.write(str(saldo))
+            aktualneSaldo = saldo
+        noweSaldo = aktualneSaldo + dodajDoSalda
+        if noweSaldo < 0:
+            print("Twoje saldo nie może być ujemne")
+        else:
+            with open("plik.txt", "w") as plik:
+                plik.write(str(noweSaldo))
+            saldo = noweSaldo
 
     if menuWyboru == "2":
         tytulFilmu = input("Podaj tytuł filmu jaki chcesz wypożyczyć: ")
@@ -43,7 +52,6 @@ while not zakonczProgram:
                     wypozyczonoFilm = True
                     saldo += 20
                     print(f"Wypożyczono film {tytulFilmu}")
-
         if not znalezionoFilm:
             print("Nie znaleziono filmu o podanych danych")
             konto.append("Próba wypożyczenia filmu, którego nie mamy")
